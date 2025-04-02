@@ -1,6 +1,5 @@
 package com.quang.elastic.service;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import com.quang.elastic.dto.request.ProductCreateRequest;
 import com.quang.elastic.dto.request.ProductUpdateRequest;
 import com.quang.elastic.dto.response.ProductResponse;
@@ -16,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductService {
     ProductRepository productRepository;
     ProductMapper productMapper;
@@ -52,13 +51,29 @@ public class ProductService {
     }
 
     public void deleteProduct(String id) {
+        if (!productRepository.existsById(id)) {
+            throw new IllegalArgumentException("Product not found");
+        }
         productRepository.deleteById(id);
     }
 
-    public List<ProductResponse> searchProduct(String keyword, double minPrice) {
+    public List<ProductResponse> searchProduct(String keyword, Double minPrice) {
         return productRepository.findProductsByKeywordAndMinPrice(keyword, minPrice)
                 .stream()
                 .map(productMapper::toProductResponse)
                 .toList();
     }
+    public List<ProductResponse> searchProductByName(String name) {
+        return productRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+    public List<ProductResponse> searchProductByPriceBetween(Double minPrice, Double maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice)
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+
 }
