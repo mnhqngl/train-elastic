@@ -21,3 +21,16 @@ spring:
     elasticsearch:
       repositories:
         enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: train_elasticsearch
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# Debezium configuration      
+debezium:
+  enabled: true
