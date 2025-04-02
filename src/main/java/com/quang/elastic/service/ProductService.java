@@ -32,7 +32,7 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        productMapper.updateProduct(request, product);
+        productMapper.updateProduct(product,request);
         return productMapper.toProductResponse(productRepository.save(product));
     }
 
